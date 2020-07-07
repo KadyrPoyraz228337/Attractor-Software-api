@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
+const {nanoid} = require('nanoid')
 
-const UserSchema = mongoose.Schema({
+const SALT_FACTOR = 10;
+
+const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -15,6 +18,26 @@ const UserSchema = mongoose.Schema({
         required: true
     }
 })
+
+UserSchema.pre('save', async function (next) {
+    if(!this.isModified('password')) return next();
+
+    const salt = await bcrypt.genSalt(SALT_FACTOR);
+
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+UserSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.password;
+        return ret;
+    }
+});
+
+UserSchema.methods.addToken = function () {
+    this.token = nanoid();
+};
 
 const modelName = 'User'
 
