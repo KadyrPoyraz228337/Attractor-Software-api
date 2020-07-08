@@ -46,4 +46,24 @@ router.post('/sessions', isAuth, async (req, res) => {
     }
 })
 
+router.delete('/:id', isAuth, async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const user = await User.findOne({_id: id});
+
+        if (!user) return res.status(404).send({message: "User not found"});
+        if (user._id.toString() === req.currentUser._id.toString())
+            return res.status(401).send({message: "You cannot delete yourself"});
+
+        user.isRemoved = true;
+        user.date = Date.now();
+        user.save(req);
+
+        res.send('success')
+    } catch (e) {
+        res.status(500).send(e)
+    }
+});
+
 module.exports = router;
