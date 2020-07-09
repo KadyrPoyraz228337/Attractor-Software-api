@@ -13,11 +13,11 @@ const run = async () => {
     }
 
     const [valera, alex, john] = await User.create({
-        username: 'Valera',
+        username: 'valera',
         password: '123',
         token: '123'
     },{
-        username: 'Alex',
+        username: 'alex',
         password: '123',
         role: 'admin',
         token: '123'
