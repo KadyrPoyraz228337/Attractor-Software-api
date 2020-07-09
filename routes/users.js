@@ -15,6 +15,7 @@ router.post('/', async (req, res) => {
         }
 
         const user = new User({username, password})
+        user.addToken()
         await user.save()
 
         res.send(user)
@@ -23,7 +24,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.post('/sessions', isAuth, async (req, res) => {
+router.post('/sessions', async (req, res) => {
     try {
         const {username, password} = req.body;
 
@@ -40,7 +41,7 @@ router.post('/sessions', isAuth, async (req, res) => {
         user.addToken();
         user.save()
 
-        req.send(user)
+        res.send(user)
     } catch (e) {
         res.status(500).send(e)
     }
