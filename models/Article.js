@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ArticleSchema = mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
         required: true
     },
     user: {
@@ -12,13 +13,24 @@ const ArticleSchema = mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: true,
     },
     description: {
         type: String,
-        required: true
+        required: function () {
+            return !this.image
+        }
     },
-    image: String
+    image: {
+        type: String,
+        required: function () {
+            return !this.title
+        }
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
 })
 
 const modelName = 'Article';
